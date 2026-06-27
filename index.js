@@ -12,7 +12,7 @@ connectRedis();
 
 // 1. CORS Middleware
 app.use(cors({
-    origin: [process.env.CLIENT_URL || "http://localhost:3000", "http://localhost:3000"],
+    origin: [process.env.CLIENT_URL || "https://rent-house-server-eta.vercel.app/"],
     credentials: true
 }));
 
