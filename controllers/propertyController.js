@@ -17,13 +17,20 @@ const getAllProperties = async (req, res) => {
     
     let query = { status: "Approved" }; 
     
-    if (location && location !== "undefined") query.location = { $regex: location, $options: 'i' };
-    if (type && type !== "All" && type !== "undefined") query.type = { $regex: type, $options: 'i' };
-    if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = Number(minPrice);
-      if (maxPrice) query.price.$lte = Number(maxPrice);
+    // "undefined" স্ট্রিং চেক করে ফিল্টার করা হলো
+    if (location && location !== "undefined" && location !== "") {
+        query.location = { $regex: location, $options: 'i' };
     }
+    if (type && type !== "All" && type !== "undefined" && type !== "") {
+        query.type = { $regex: type, $options: 'i' };
+    }
+    
+    if ((minPrice && minPrice !== "undefined") || (maxPrice && maxPrice !== "undefined")) {
+      query.price = {};
+      if (minPrice && minPrice !== "undefined") query.price.$gte = Number(minPrice);
+      if (maxPrice && maxPrice !== "undefined") query.price.$lte = Number(maxPrice);
+    }
+
     const properties = await Property.find(query).sort({ createdAt: -1 });
     
     // Cache the result for 10 minutes
@@ -38,6 +45,7 @@ const getAllProperties = async (req, res) => {
 const getSingleProperty = async (req, res) => {
   try {
     const { id } = req.params;
+    
     // আইডি সঠিক কি না চেক করা
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ success: false, message: "Invalid ID format" });
@@ -62,7 +70,6 @@ const getSingleProperty = async (req, res) => {
   }
 };
 
-// অন্যান্য ফাংশন আগের মতোই থাকবে
 const getFeaturedProperties = async (req, res) => {
   try {
     const cacheKey = 'properties:featured';

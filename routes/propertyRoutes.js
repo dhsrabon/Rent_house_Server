@@ -1,17 +1,29 @@
 const express = require("express");
 const router = express.Router();
-const controller = require("../controllers/propertyController");
+const {
+  getAllProperties,
+  getFeaturedProperties,
+  addProperty,
+  getMyProperties,
+  getSingleProperty,
+  updatePropertyStatus,
+  deleteProperty,
+  getAllPropertiesForAdmin
+} = require("../controllers/propertyController");
 
-// ১. স্পেশাল রাউটস সবার আগে
-router.get("/admin/all", controller.getAllPropertiesForAdmin);
-router.get("/featured", controller.getFeaturedProperties);
+// স্পেসিফিক রাউটগুলো আগে দিতে হবে
+router.get("/all", getAllProperties); // আপনার ফ্রন্টএন্ড /all কল করছে, তাই এটি আগে থাকবে
+router.get("/featured", getFeaturedProperties);
+router.get("/admin/all", getAllPropertiesForAdmin);
+router.get("/my/:ownerId", getMyProperties);
 
-// ২. ডাটাবেসের অপারেশনস
-router.post("/add", controller.addProperty);
-router.put("/status/:id", controller.updatePropertyStatus);
+// রুট রাউট
+router.get("/", getAllProperties); 
+router.post("/add", addProperty);
 
-// ৩. ডাইনামিক এবং পাবলিক রাউটস (এগুলো শেষে দিবেন)
-router.get("/:id", controller.getSingleProperty); // আইডি এখানে ধরা পড়বে
-router.get("/", controller.getAllProperties);     // সব প্রপার্টি দেখাবে
+// ডাইনামিক (/:id) রাউটগুলো সবসময় শেষে দিতে হবে
+router.get("/:id", getSingleProperty); 
+router.put("/update-status/:id", updatePropertyStatus);
+router.delete("/delete/:id", deleteProperty);
 
 module.exports = router;
