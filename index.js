@@ -10,13 +10,17 @@ const PORT = process.env.PORT || 5000;
 // Initialize Redis/Cache
 connectRedis();
 
-// 1. CORS Middleware
+// 1. CORS Middleware (এখানে ফ্রন্টএন্ডের লিংক দেওয়া হয়েছে)
 app.use(cors({
-    origin: [process.env.CLIENT_URL || "https://rent-house-server-eta.vercel.app/"],
-    credentials: true
+    origin: [
+        process.env.CLIENT_URL || "https://rent-house-client-blond.vercel.app", 
+        "http://localhost:3000"
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 }));
 
-// 🔴 2. ওয়েবহুকের জন্য Raw Body (এটি express.json() এর আগে থাকতে হবে)
+// 🔴 2. ওয়েবহুকের জন্য Raw Body (এটি express.json() এর আগে থাকতে হবে)
 app.use('/api/payment/webhook', express.raw({ type: 'application/json' }));
 
 // 3. বাকি রাউটের জন্য JSON পার্সার
@@ -27,14 +31,14 @@ const authRoutes = require('./routes/authRoutes');
 const propertyRoutes = require('./routes/propertyRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
-const paymentRoutes = require('./routes/paymentRoutes'); // 🔴 ফাইলের নাম আপডেট করা হয়েছে
+const paymentRoutes = require('./routes/paymentRoutes');
 
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/properties', propertyRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/wishlist', wishlistRoutes);
-app.use('/api/payment', paymentRoutes); // 🔴 পেমেন্ট রাউট কানেক্ট করা হয়েছে
+app.use('/api/payment', paymentRoutes);
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI)
