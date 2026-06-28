@@ -6,14 +6,14 @@ export default function AllUsers() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/users")
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users`)
       .then((res) => res.json())
       .then((data) => setUsers(data.users));
   }, []);
 
   const handleRoleChange = async (id, newRole) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/users/update-role/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/update-role/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: newRole }),
